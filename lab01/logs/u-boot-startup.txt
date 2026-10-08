@@ -1,0 +1,41 @@
+LAB 01 - Part B - U-Boot startup
+Selected excerpts from the observed terminal output.
+
+QEMU command:
+qemu-system-arm \
+  -M vexpress-a9 \
+  -cpu cortex-a9 \
+  -m 512M \
+  -nographic \
+  -kernel ~/embedded_lab1/output/u-boot
+
+U-Boot 2022.04 (Oct 08 2026 - 14:24:34 +0700)
+
+DRAM:  512 MiB
+WARNING: Caches not enabled
+Core:  12 devices, 7 uclasses, devicetree: embed
+Flash: 64 MiB
+MMC:   mmci@5000: 0
+Loading Environment from Flash...
+*** Warning - bad CRC, using default environment
+
+In:    serial
+Out:   serial
+Err:   serial
+Net:   eth0: ethernet@3,02000000
+
+Hit any key to stop autoboot: 0
+
+MMC Device 1 not found
+no mmc device at slot 1
+
+TFTP error: trying to overwrite reserved memory...
+Wrong Image Format for bootm command
+ERROR: can't get kernel image!
+
+=>
+
+Result:
+U-Boot successfully started and entered its command prompt.
+Default autoboot failed because no suitable boot image
+was available through the configured boot sources.

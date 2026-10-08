@@ -1,0 +1,55 @@
+LAB 01 - Part B - U-Boot Environment
+Selected excerpts from observed terminal sessions.
+
+1. Environment variables
+
+=> printenv bootargs
+bootargs=console=ttyAMA0,115200 root=/dev/ram0 rw init=/sbin/init mem=512M
+
+=> printenv bootcmd
+bootcmd=bootz 0x60100000 0x64000000 0x60000000
+
+2. Initial saveenv failure
+
+=> saveenv
+Saving Environment to Flash...
+Error: start and/or end address not on sector boundary
+Error: start and/or end address not on sector boundary
+Failed (1)
+
+3. Flash information
+
+Bank #1: 0x40000000, 32 MB, 256 sectors
+Bank #2: 0x44000000, 32 MB, 256 sectors
+Sector size: 0x20000 (128 KiB)
+
+4. Environment configuration fix
+
+Original:
+CONFIG_ENV_ADDR=0x47F80000
+
+Updated:
+CONFIG_ENV_ADDR=0x45F80000
+
+CONFIG_ENV_SIZE=0x40000
+CONFIG_ENV_SECT_SIZE=0x40000
+CONFIG_ENV_IS_IN_FLASH=y
+
+5. Successful saveenv
+
+=> saveenv
+Saving Environment to Flash... .. done
+Un-Protected 2 sectors
+Erasing Flash...
+.. done
+Erased 2 sectors
+Writing to Flash... done
+.. done
+Protected 2 sectors
+OK
+
+Result:
+The environment was written successfully to emulated Flash
+in the current QEMU session.
+
+Persistent storage across QEMU restarts has not been verified.
