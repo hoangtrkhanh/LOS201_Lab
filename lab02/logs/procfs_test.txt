@@ -1,0 +1,30 @@
+=== Test procfs & sysfs ===
+--- /proc/lab2_info (before write) ---
+LAB-02 Driver Statistics
+======================
+Driver name   : lab2
+Major number : 240
+Buffer size   : 1024 bytes
+Data length   : 10 bytes
+Open count    : 8
+Last data     : [Message_3
+]
+lab2_driver: device opened (count=9)
+lab2_driver: received 30 bytes: [Embedded Linux Lab2 Test Data
+]
+lab2_driver: device closed
+--- /proc/lab2_info (after write) ---
+LAB-02 Driver Statistics
+======================
+Driver name   : lab2
+Major number : 240
+Buffer size   : 1024 bytes
+Data length   : 30 bytes
+Open count    : 9
+Last data     : [Embedded Linux Lab2 Test Data
+]
+--- sysfs attributes ---
+buffer_len : 30
+open_count : 9
+last_data : Embedded Linux Lab2 Test Data
+=== procfs/sysfs Test PASSED ===

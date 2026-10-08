@@ -1,0 +1,54 @@
+=== LAB-02: Device Driver Test ===
+[1] Loading lab2_driver...
+[2] Loaded modules:
+lab2_driver 16384 0 - Live 0x7f000000 (O)
+[3] Creating device node...
+(node already exists)
+crw-rw-rw-    1 root     0         240,   0 Oct  8 09:37 /dev/lab2
+[4] Writing to device...
+lab2_driver: device opened (count=1)
+lab2_driver: received 30 bytes: [Hello from userspace, LAB-02!
+]
+lab2_driver: device closed
+[5] Reading from device...
+lab2_driver: device opened (count=2)
+lab2_driver: sent 30 bytes to user
+lab2_driver: device closed
+Read back: [Hello from userspace, LAB-02!]
+[6] Multiple write/read test...
+lab2_driver: device opened (count=3)
+lab2_driver: received 10 bytes: [Message_1
+]
+lab2_driver: device closed
+lab2_driver: device opened (count=4)
+lab2_driver: sent 10 bytes to user
+Message_1
+lab2_driver: device closed
+lab2_driver: device opened (count=5)
+lab2_driver: received 10 bytes: [Message_2
+]
+lab2_driver: device closed
+lab2_driver: device opened (count=6)
+lab2_driver: sent 10 bytes to user
+Message_2
+lab2_driver: device closed
+lab2_driver: device opened (count=7)
+lab2_driver: received 10 bytes: [Message_3
+]
+lab2_driver: device closed
+lab2_driver: device opened (count=8)
+lab2_driver: sent 10 bytes to user
+Message_3
+lab2_driver: device closed
+[7] Kernel messages (dmesg):
+lab2_driver: device closed
+lab2_driver: device opened (count=6)
+lab2_driver: sent 10 bytes to user
+lab2_driver: device closed
+lab2_driver: device opened (count=7)
+lab2_driver: received 10 bytes: [Message_3
+lab2_driver: device closed
+lab2_driver: device opened (count=8)
+lab2_driver: sent 10 bytes to user
+lab2_driver: device closed
+=== Test PASSED ===
