@@ -1,0 +1,33 @@
+#!/bin/sh
+
+echo '[ LAB-02 ] Starting system initialization...'
+
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t tmpfs tmpfs /tmp
+mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
+
+[ -c /dev/console ] || mknod /dev/console c 5 1
+[ -c /dev/null ] || mknod /dev/null c 1 3
+[ -c /dev/zero ] || mknod /dev/zero c 1 5
+
+hostname embedded-lab2
+
+echo '[ LAB-02 ] Loading lab2_driver module...'
+
+if [ -f /lib/modules/5.15.0/lab2_driver.ko ]; then
+    if insmod /lib/modules/5.15.0/lab2_driver.ko; then
+        echo '[ LAB-02 ] lab2_driver loaded OK'
+
+        [ -c /dev/lab2 ] || mknod /dev/lab2 c 240 0
+        chmod 666 /dev/lab2
+
+        echo '[ LAB-02 ] /dev/lab2 created (major=240, minor=0)'
+    else
+        echo '[ LAB-02 ] ERROR: insmod failed!'
+    fi
+else
+    echo '[ LAB-02 ] WARNING: lab2_driver.ko not found'
+fi
+
+echo '[ LAB-02 ] System initialization complete!'
