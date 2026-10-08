@@ -1,0 +1,49 @@
+LAB 01 - Part C.5 - Successful Linux Boot
+Selected excerpts from observed terminal output.
+
+Platform:
+- QEMU vexpress-a9
+- ARM Cortex-A9
+- RAM: 512 MiB
+- SMP: 2 CPUs
+
+Linux version 5.15.0
+Machine model: V2P-CA9
+
+Unpacking initramfs...
+Freeing initrd memory: 1056K
+Run /sbin/init as init process
+Boot completed! Welcome to Embedded Linux Lab 1
+
+uname -a:
+Linux embedded-lab 5.15.0 armv7l GNU/Linux
+
+CPU:
+processor: 0
+processor: 1
+Hardware: ARM-Versatile Express
+
+RAM:
+MemTotal: 508288 kB
+
+Mounted filesystems:
+rootfs on / type rootfs
+none on /proc type proc
+none on /sys type sysfs
+none on /tmp type tmpfs
+
+Process verification:
+PID 1: init
+Shell: /bin/sh
+
+CPU topology:
+possible: 0-3
+activated: 2 CPUs
+
+Result:
+Linux Kernel 5.15 successfully booted into
+the BusyBox userspace using initramfs.
+
+Note:
+This test booted Linux directly through QEMU,
+not through U-Boot.
