@@ -1,0 +1,63 @@
+=== LAB02 PART C: MTD / JFFS2 TEST ===
+Thu Oct  8 05:14:58 PM +07 2026
+
+=== C1: MTD devices before nandsim ===
+dev:    size   erasesize  name
+mtd0: 02000000 00001000 "BIOS"
+
+=== C2: Load NAND simulator ===
+dev:    size   erasesize  name
+mtd0: 02000000 00001000 "BIOS"
+mtd1: 02000000 00004000 "NAND simulator partition 0"
+Safe NAND device: /dev/mtd1
+Safe block device: /dev/mtdblock1
+
+=== C3: Create JFFS2 image ===
+-rw-r--r-- 1 khanh khanh 16K Oct  8 17:15 /home/khanh/embedded_lab2/mtd/rootfs.jffs2
+
+=== C4: Flash JFFS2 image ===
+Erasing 32768 Kibyte @ 0 --  0 % complete Erasing 32768 Kibyte @ 0 -- 100 % complete 
+Written 31 blocks containing only 0xff bytes
+Those block may be incorrectly treated as empty!
+Writing data to block 0 at offset 0x0
+
+=== C5: Mount JFFS2 ===
+--- Files after mount ---
+total 5.0K
+drwxr-xr-x 3 root  root     0 Jan  1  1970 .
+drwxrwxr-x 4 khanh khanh 4.0K Oct  8 17:15 ..
+-rw-rw-r-- 1 khanh khanh   18 Oct  8 17:15 hello.txt
+-rw-rw-r-- 1 khanh khanh   20 Oct  8 17:15 info.txt
+--- hello.txt ---
+Hello from JFFS2!
+--- info.txt ---
+Embedded Linux Lab2
+
+=== C6: Write persistence data ===
+
+=== C7: Remount and verify persistence ===
+--- Files after remount ---
+total 5.5K
+drwxr-xr-x 3 root  root     0 Jan  1  1970 .
+drwxrwxr-x 4 khanh khanh 4.0K Oct  8 17:15 ..
+-rw-rw-r-- 1 khanh khanh   18 Oct  8 17:15 hello.txt
+-rw-rw-r-- 1 khanh khanh   20 Oct  8 17:15 info.txt
+-rw-r--r-- 1 root  root    27 Oct  8 17:15 persist.txt
+--- Read persistence data ---
+LAB02 JFFS2 persistence OK
+PERSISTENCE TEST PASSED
+ORIGINAL DATA TEST PASSED
+
+=== C9: NAND dump / JFFS2 magic ===
+ECC failed: 0
+ECC corrected: 0
+Number of bad blocks: 0
+Number of bbt blocks: 0
+Block size 16384, page size 512, OOB size 16
+Dumping data starting at 0x00000000 and ending at 0x00000200...
+--- First 32 bytes ---
+ 85 19 01 e0 31 00 00 00 1d d9 82 42 01 00 00 00
+ 00 00 00 00 02 00 00 00 28 6d c7 6a 09 08 00 00
+--- JFFS2 magic expected: 85 19 ---
+
+=== LAB02 MTD/JFFS2: PASSED ===
