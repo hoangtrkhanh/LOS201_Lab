@@ -9,7 +9,7 @@ Exception stack(0x810a7fb0 to 0x810a7ff8)
 ---[ end Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0) ]---
 
 Analysis:
-- U-Boot was able to transfer control to Linux Kernel.
+- QEMU loaded the Linux Kernel directly using -kernel and -dtb.
 - Linux reached the root filesystem initialization stage.
 - A usable root filesystem was not available.
 - BusyBox and a bootable initramfs have not yet been prepared.
