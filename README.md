@@ -15,7 +15,7 @@ Status: Completed
 - Successful build flags: KCFLAGS="-march=armv7-a"
 
 ### Part B - U-Boot
-Status: In progress - U-Boot built, saveenv successful, Linux rootfs boot pending
+Status: Completed - U-Boot built, environment saved, expected Kernel Panic recorded
 
 ### Part C - BusyBox and initramfs
-Status: Not started
+Status: Completed - BusyBox initramfs booted successfully on QEMU
