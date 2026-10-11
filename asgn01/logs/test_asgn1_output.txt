@@ -1,0 +1,69 @@
+=== ASGN1 TASK1 TEST BEGIN ===
+asgn1_driver 16384 0 - Live 0x7f005000 (O)
+crw-------    1 root     0         241,   0 Oct 11 07:59 [1;35m/dev/asgn1[m
+GET_VERSION: asgn1_driver v1.0 - MSSV
+SET_MODE: 0 OK
+Kernel mode read: [[KERNEL]hello]
+KERNEL MODE: PASS
+SET_MODE: 1 OK
+Echo mode read: [hello]
+ECHO MODE: PASS
+--- GET_STATS before RESET ---
+open_count      : 8
+write_count     : 2
+read_count      : 2
+buffer_len      : 6
+last_write_size : 6
+RESET_BUFFER: OK
+RESET EMPTY BUFFER: PASS
+--- GET_STATS after RESET ---
+open_count      : 11
+write_count     : 0
+read_count      : 0
+buffer_len      : 0
+last_write_size : 0
+RESET COUNTERS: PASS
+INVALID_IOCTL: ENOTTY OK
+--- PROCFS ---
+Driver       : asgn1_driver
+Major        : 241
+Mode         : 1
+Buffer length: 0
+Open count   : 12
+Write count  : 0
+Read count   : 0
+--- SYSFS ---
+1
+0
+--- DMESG TASK1 ---
+asgn1_driver: invalid ioctl 0x802c542a
+asgn1_driver: write 6 bytes mode=0
+asgn1_driver: device closed
+asgn1_driver: device opened
+asgn1_driver: read 14 bytes
+asgn1_driver: device closed
+asgn1_driver: device opened
+asgn1_driver: ioctl SET_MODE=1
+asgn1_driver: device closed
+asgn1_driver: device opened
+asgn1_driver: write 6 bytes mode=1
+asgn1_driver: device closed
+asgn1_driver: device opened
+asgn1_driver: read 6 bytes
+asgn1_driver: device closed
+asgn1_driver: device opened
+asgn1_driver: ioctl GET_STATS
+asgn1_driver: device closed
+asgn1_driver: device opened
+asgn1_driver: ioctl RESET_BUFFER
+asgn1_driver: device closed
+asgn1_driver: device opened
+asgn1_driver: device closed
+asgn1_driver: device opened
+asgn1_driver: ioctl GET_STATS
+asgn1_driver: device closed
+asgn1_driver: device opened
+asgn1_driver: invalid ioctl 0x5a63
+asgn1_driver: device closed
+asgn1_driver: module unloaded
+=== ASGN1 TASK1 TEST PASSED ===

@@ -1,0 +1,37 @@
+=== ASGN1 TASK2 TEST BEGIN ===
+counter_driver 16384 0 - Live 0x7f005000 (O)
+Misc major=10 minor=125
+crw-rw-rw-    1 root     0          10, 125 Oct 11 07:59 [1;35m/dev/counter[m
+--- PROC BEFORE WRITE ---
+Counter value: 0
+Total reads  : 0
+Total writes : 0
+Read 1: 0
+Read 2: 1
+Read 3: 2
+AUTO INCREMENT: PASS
+--- PROC AFTER WRITE 100 ---
+Counter value: 100
+Total reads  : 3
+Total writes : 1
+After set 100, read: 100
+SET 100: PASS
+NEGATIVE VALUE REJECTED: PASS
+INVALID STRING REJECTED: PASS
+--- PROC AFTER RESET ---
+Counter value: 0
+Total reads  : 4
+Total writes : 2
+After reset, read: 0
+RESET TO ZERO: PASS
+--- DMESG TASK2 ---
+counter_driver: loaded, major=10, minor=125
+counter_driver: read=0, incremented
+counter_driver: read=1, incremented
+counter_driver: read=2, incremented
+counter_driver: set counter=100
+counter_driver: read=100, incremented
+counter_driver: set counter=0
+counter_driver: read=0, incremented
+counter_driver: module unloaded
+=== ASGN1 TASK2 TEST PASSED ===
