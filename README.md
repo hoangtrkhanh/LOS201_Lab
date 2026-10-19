@@ -117,3 +117,30 @@ Run the test scripts in the configured QEMU/initramfs test environment; they exp
 | Combined QEMU run | Both tasks exited with status 0 | [qemu_session.txt](asgn01/logs/qemu_session.txt) |
 
 > **Note:** The current Task 1 version string contains the placeholder `MSSV`, and both driver sources contain placeholder author metadata (`HoTen - MSSV`). Replace these values with your own details if your course requires them.
+
+
+## LAB 03 - Debugging and Performance Analysis
+
+**Status:** Completed
+
+### Objectives
+- Remote debugging using GDB and gdbserver.
+- Memory leak detection using Valgrind.
+- System call analysis using strace.
+- CPU profiling using perf and FlameGraph.
+- Real-time latency measurement using cyclictest.
+
+### Results
+- Identified 3 bugs using GDB.
+- Fixed 16,900 bytes of memory leaks.
+- Successfully analyzed system calls on ARMv7 QEMU.
+- Identified heavy_compute() as a CPU hotspot.
+- Generated latency histograms.
+
+### Files
+- [Source Code](./lab03/apps/)
+- [Logs](./lab03/logs/)
+- [ARM initramfs](./lab03/output/)
+- [Full LAB03](./lab03/)
+
+---
