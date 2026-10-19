@@ -144,3 +144,45 @@ Run the test scripts in the configured QEMU/initramfs test environment; they exp
 - [Full LAB03](./lab03/)
 
 ---
+
+---
+
+## ASSIGNMENT-02 – Smart Monitoring System
+
+### Part A – Simulated Sensor Driver
+
+**Environment**
+- Linux Kernel 5.15
+- ARMv7 Cortex-A9
+- QEMU Versatile Express
+
+**Source files**
+- `asgn02/driver/sms_sensor_driver.c` – Kernel driver
+- `asgn02/driver/sms_sensor.h` – Device and ioctl definitions
+- `asgn02/driver/Makefile` – ARM module build
+- `asgn02/tests/test_ioctl.c` – IOCTL verification
+
+**Implemented features**
+- Character device `/dev/sms_sensor`
+- CSV sensor readings
+- Simulated temperature and humidity
+- `/proc/sms_stats` statistics
+- `SMS_SET_INTERVAL` ioctl
+- Mutex protection and sampling interval control
+
+**Testing results**
+- Kernel module loading: PASS
+- CSV sensor readings: PASS
+- Procfs statistics: PASS
+- IOCTL interval configuration: PASS
+- Invalid interval rejection: PASS
+- EAGAIN before minimum interval: PASS
+- Reading after interval: PASS
+
+**Build**
+
+From the repository root, run `cd asgn02/driver` followed by `make arm`. Adjust the kernel source path in the Makefile for your environment.
+
+**Progress**
+- Part A: Core driver functionality tested on QEMU
+- Part B: Multithreaded userspace application – pending
