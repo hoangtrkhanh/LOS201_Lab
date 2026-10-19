@@ -1,0 +1,25 @@
+Continuing.
+
+Breakpoint 3, create_message (text=0x400940 "Hello Embedded Linux") at buggy_app.c:16
+16	    char *buf = malloc(strlen(text) + 1);
+#0  create_message (text=0x400940 "Hello Embedded Linux") at buggy_app.c:16
+#1  0x00400788 in main (argc=1, argv=0x7efffe94) at buggy_app.c:39
+17	    strcpy(buf, text);
+18	    free(buf);
+19	    return buf;   /* Bug: tra ve pointer da bi free */
+$7 = 0x422010 "\"\004"
+0x422010:	"\"\004"
+Continuing.
+
+Breakpoint 4, calculate (a=100000, b=100000) at buggy_app.c:24
+24	    int result = a * b;   /* Bug: a*b co the overflow int */
+$8 = 100000
+$9 = 100000
+25	    printf("calculate(%d, %d) = %d\n", a, b, result);
+$10 = 1410065408
+$11 = 10000000000
+#0  calculate (a=100000, b=100000) at buggy_app.c:25
+#1  0x004007b4 in main (argc=1, argv=0x7efffe94) at buggy_app.c:44
+pc             0x40070c            0x40070c <calculate+20>
+sp             0x7efffcc8          0x7efffcc8
+lr             0x4007b5            4196277

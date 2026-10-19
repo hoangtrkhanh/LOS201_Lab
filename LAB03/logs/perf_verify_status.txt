@@ -1,0 +1,8 @@
+=== THU CHAY 5 LAN (exit code) ===
+run=1 exit_code=0
+run=2 exit_code=0
+run=3 exit_code=0
+run=4 exit_code=0
+run=5 exit_code=0
+perf_stat_exit=139
+perf_record_exit=139

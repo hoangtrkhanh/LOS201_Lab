@@ -1,0 +1,265 @@
+====================================
+       LAB03 FINAL CHECK
+====================================
+
+===== A. GDB DEBUG =====
+⚠️ warning: Build ID mismatch between current exec-file /home/khanh/embedded_lab3/apps/buggy_app
+and automatically determined exec-file /usr/bin/buggy_app
+exec-file-mismatch handling is currently "ask"
+⚠️ warning: loading /usr/bin/buggy_app /usr/bin/buggy_app: No such file or directory.
+Reading /lib/ld-linux-armhf.so.3 from remote target...
+⚠️ warning: File transfers from remote targets can be slow. Use "set sysroot" to access files locally instead.
+Reading /lib/ld-linux-armhf.so.3 from remote target...
+0x76fdee58 in _start () from target:/lib/ld-linux-armhf.so.3
+Breakpoint 1 at 0x400732: file buggy_app.c, line 29.
+Breakpoint 2 at 0x400682: file buggy_app.c, line 7.
+Breakpoint 3 at 0x4006cc: file buggy_app.c, line 16.
+Breakpoint 4 at 0x400702: file buggy_app.c, line 24.
+Breakpoint 5 at 0x40068c: file buggy_app.c, line 9.
+Reading /lib/libc.so.6 from remote target...
+
+Breakpoint 1, main (argc=1, argv=0x7efffe94) at buggy_app.c:29
+29	int main(int argc, char *argv[]) {
+
+=== MAIN FUNCTION ===
+#0  main (argc=1, argv=0x7efffe94) at buggy_app.c:29
+
+Breakpoint 2, process_data (data=0x7efffcf0, len=5) at buggy_app.c:7
+7	    int sum = 0;
+
+=== PROCESS_DATA ===
+#0  process_data (data=0x7efffcf0, len=5) at buggy_app.c:7
+#1  0x00400774 in main (argc=1, argv=0x7efffe94) at buggy_app.c:35
+$1 = 5
+$2 = {10, 20, 30, 40, 50}
+
+Breakpoint 5, process_data (data=0x7efffcf0, len=5) at buggy_app.c:9
+9	        sum += data[i];                 /* Out-of-bounds khi i==len */
+
+=== BUG 1: OUT OF BOUNDS ===
+$3 = 5
+$4 = 5
+$5 = 1
+$6 = (int *) 0x7efffd04
+#0  process_data (data=0x7efffcf0, len=5) at buggy_app.c:9
+#1  0x00400774 in main (argc=1, argv=0x7efffe94) at buggy_app.c:35
+pc             0x40068c            0x40068c <process_data+20>
+sp             0x7efffcc8          0x7efffcc8
+lr             0x400775            4196213
+Continuing.
+
+Breakpoint 3, create_message (text=0x400940 "Hello Embedded Linux") at buggy_app.c:16
+16	    char *buf = malloc(strlen(text) + 1);
+#0  create_message (text=0x400940 "Hello Embedded Linux") at buggy_app.c:16
+#1  0x00400788 in main (argc=1, argv=0x7efffe94) at buggy_app.c:39
+17	    strcpy(buf, text);
+18	    free(buf);
+19	    return buf;   /* Bug: tra ve pointer da bi free */
+$7 = 0x422010 "\"\004"
+0x422010:	"\"\004"
+Continuing.
+
+Breakpoint 4, calculate (a=100000, b=100000) at buggy_app.c:24
+24	    int result = a * b;   /* Bug: a*b co the overflow int */
+$8 = 100000
+$9 = 100000
+25	    printf("calculate(%d, %d) = %d\n", a, b, result);
+$10 = 1410065408
+$11 = 10000000000
+#0  calculate (a=100000, b=100000) at buggy_app.c:25
+#1  0x004007b4 in main (argc=1, argv=0x7efffe94) at buggy_app.c:44
+pc             0x40070c            0x40070c <calculate+20>
+sp             0x7efffcc8          0x7efffcc8
+lr             0x4007b5            4196277
+
+===== B. VALGRIND =====
+==44975== LEAK SUMMARY:
+==44975==    definitely lost: 16,900 bytes in 250 blocks
+==44975==    indirectly lost: 0 bytes in 0 blocks
+==44975==      possibly lost: 0 bytes in 0 blocks
+==44975==    still reachable: 0 bytes in 0 blocks
+==44975==         suppressed: 0 bytes in 0 blocks
+==44975== 
+==44975== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 0 from 0)
+==44991== Command: ./leaky_app_fixed
+==44991== Parent PID: 43211
+==44991== 
+==44991== 
+==44991== HEAP SUMMARY:
+==44991==     in use at exit: 0 bytes in 0 blocks
+==44991==   total heap usage: 352 allocs, 352 frees, 21,124 bytes allocated
+==44991== 
+==44991== All heap blocks were freed -- no leaks are possible
+==44991== 
+==44991== For lists of detected and suppressed errors, rerun with: -s
+==44991== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+
+===== C. STRACE SUMMARY =====
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 85.71    0.000012           0        75           write
+ 14.29    0.000002           0         4           openat
+  0.00    0.000000           0         2           read
+  0.00    0.000000           0         4           close
+  0.00    0.000000           0         5           fstat
+  0.00    0.000000           0        14           mmap
+  0.00    0.000000           0         4           mprotect
+  0.00    0.000000           0         3           munmap
+  0.00    0.000000           0         3           brk
+  0.00    0.000000           0         2           pread64
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+  0.00    0.000000           0         1           set_tid_address
+  0.00    0.000000           0         1           set_robust_list
+  0.00    0.000000           0         1           prlimit64
+  0.00    0.000000           0         1           getrandom
+  0.00    0.000000           0         1           rseq
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000014           0       124         1 total
+
+===== C. PERF REPORT =====
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 6  of event 'cpu_atom/cycles/P'
+# Event count (approx.): 1480699
+#
+# Children      Self  Command      Shared Object         Symbol                                    
+# ........  ........  ...........  ....................  ..........................................
+#
+    76.80%     0.00%  perf_target  [kernel.kallsyms]     [.] entry_SYSCALL_64_after_hwframe
+            |
+            ---entry_SYSCALL_64_after_hwframe
+               do_syscall_64
+               x64_sys_call
+               |          
+               |--32.87%--__x64_sys_mmap
+               |          ksys_mmap_pgoff
+               |          vm_mmap_pgoff
+               |          do_mmap
+               |          mmap_region
+               |          __mmap_region
+               |          |          
+               |          |--18.88%--__mmap_new_vma
+               |          |          mas_store_prealloc
+               |          |          mas_wr_store_entry
+               |          |          mas_wr_bnode
+               |          |          mas_split
+               |          |          mas_push_data
+               |          |          mast_fill_bnode
+               |          |          
+               |           --13.99%--can_vma_merge_right
+               |          
+               |--27.05%--__x64_sys_write
+               |          ksys_write
+               |          vfs_write
+               |          tty_write
+               |          file_tty_write.isra.0
+               |          iterate_tty_write
+               |          n_tty_write
+               |          process_output_block
+               |          pty_write
+               |          tty_insert_flip_string_and_push_buffer
+               |          queue_work_on
+
+===== C. PERF STAT =====
+./perf_target: Segmentation fault
+
+ Performance counter stats for './perf_target':
+
+                 3      context-switches                 #     94.2 cs/sec  cs_per_second     
+                 1      cpu-migrations                   #     31.4 migrations/sec  migrations_per_second
+               376      page-faults                      #  11803.1 faults/sec  page_faults_per_second
+             31.86 msec task-clock                       #      0.3 CPUs  CPUs_utilized       
+            12,425      cpu_core/branch-misses/          #      0.0 %  branch_miss_rate         (21.34%)
+        86,572,081      cpu_core/branches/               #   2717.6 M/sec  branch_frequency     (21.34%)
+       131,996,060      cpu_core/cpu-cycles/             #      4.1 GHz  cycles_frequency       (21.34%)
+       631,526,090      cpu_core/instructions/           #      4.8 instructions  insn_per_cycle  (21.34%)
+             4,128      cpu_atom/branch-misses/          #      0.0 %  branch_miss_rate         (31.58%)
+        39,521,919      cpu_atom/branches/               #   1240.6 M/sec  branch_frequency     (34.69%)
+       103,901,998      cpu_atom/cpu-cycles/             #      3.3 GHz  cycles_frequency       (37.81%)
+       290,073,437      cpu_atom/instructions/           #      2.8 instructions  insn_per_cycle  (40.95%)
+             TopdownL1 (cpu_core)                        #      0.0 %  tma_bad_speculation    
+                                                         #      6.7 %  tma_frontend_bound       (21.34%)
+                                                         #      9.1 %  tma_backend_bound      
+                                                         #     84.3 %  tma_retiring             (21.34%)
+             TopdownL1 (cpu_atom)                        #     37.8 %  tma_backend_bound        (50.24%)
+                                                         #      2.7 %  tma_frontend_bound       (47.14%)
+                                                         #      0.1 %  tma_bad_speculation    
+                                                         #     59.5 %  tma_retiring             (43.98%)
+
+       0.122454354 seconds time elapsed
+
+       0.031797000 seconds user
+       0.001025000 seconds sys
+
+
+
+===== D. CYCLICTEST STANDARD =====
+000032 000000	000000	000000	000004
+000033 000000	000000	000001	000002
+000034 000000	000000	000000	000002
+000040 000000	000001	000001	000000
+000051 000000	000000	000000	000001
+000052 000000	000000	000001	000000
+000054 000000	000001	000001	000000
+000055 000001	000000	000000	000000
+000063 000000	000001	000000	000000
+000070 000000	000001	000000	000000
+000073 000000	000001	000000	000000
+000097 000000	000000	000001	000000
+000107 000000	000001	000000	000000
+000114 000000	000000	000001	000000
+000144 000000	000001	000000	000000
+# Min Latencies: 00001 00001 00001 00001
+# Avg Latencies: 00001 00001 00002 00001
+# Max Latencies: 00954 00144 01175 01169
+# Histogram Overflows: 00002 00000 00004 00001
+# Histogram Overflow at cycle number:
+# Thread 0: 00664 08488
+# Thread 1: 
+# Thread 2: 06685 07284 07884 09249
+# Thread 3: 00662
+
+
+===== D. CYCLICTEST UNDER LOAD =====
+000058 000000	000001	000000	000000
+000059 000000	000000	000001	000001
+000060 000001	000000	000000	000000
+000068 000000	000000	000000	000001
+000073 000000	000000	000001	000000
+000075 000000	000000	000000	000001
+000081 000000	000000	000001	000000
+000095 000000	000000	000001	000000
+000104 000000	000000	000001	000000
+000115 000000	000000	000000	000001
+000133 000000	000000	000000	000001
+000136 000000	000000	000000	000002
+000137 000000	000000	000000	000001
+000142 000000	000000	000000	000001
+000167 000000	000000	000001	000000
+# Min Latencies: 00002 00002 00001 00002
+# Avg Latencies: 00003 00004 00002 00003
+# Max Latencies: 00060 00058 00167 00453
+# Histogram Overflows: 00000 00000 00000 00009
+# Histogram Overflow at cycle number:
+# Thread 0: 
+# Thread 1: 
+# Thread 2: 
+# Thread 3: 01859 01861 01863 01865 01867 01869 01872 07985 09028
+
+
+===== D. STRESS TEST =====
+stress-ng: info:  [47350] setting to a 1 min run per stressor
+stress-ng: info:  [47350] dispatching hogs: 12 cpu, 4 io, 2 vm
+stress-ng: info:  [47373] io: this is a legacy I/O sync stressor, consider using iomix instead
+stress-ng: info:  [47377] vm: using 128MB per stressor instance (total 256MB of 5.19GB available memory)
+stress-ng: info:  [47350] stopping 18 stressors
+stress-ng: info:  [47350] skipped: 0
+stress-ng: info:  [47350] passed: 18: cpu (12) io (4) vm (2)
+stress-ng: info:  [47350] failed: 0
+stress-ng: info:  [47350] metrics untrustworthy: 0
+stress-ng: info:  [47350] successful run completed in 10.06 secs

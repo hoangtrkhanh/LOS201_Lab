@@ -1,0 +1,15 @@
+==44991== Memcheck, a memory error detector
+==44991== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==44991== Using Valgrind-3.26.0 and LibVEX; rerun with -h for copyright info
+==44991== Command: ./leaky_app_fixed
+==44991== Parent PID: 43211
+==44991== 
+==44991== 
+==44991== HEAP SUMMARY:
+==44991==     in use at exit: 0 bytes in 0 blocks
+==44991==   total heap usage: 352 allocs, 352 frees, 21,124 bytes allocated
+==44991== 
+==44991== All heap blocks were freed -- no leaks are possible
+==44991== 
+==44991== For lists of detected and suppressed errors, rerun with: -s
+==44991== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

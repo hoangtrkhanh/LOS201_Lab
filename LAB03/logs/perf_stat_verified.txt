@@ -1,0 +1,15 @@
+# started on Mon Oct 19 23:36:15 2026
+
+
+ Performance counter stats for 'runuser -u khanh -- ./perf_target':
+
+             35.03 msec task-clock                                                            
+                13      context-switches                                                      
+               927      page-faults                                                           
+
+       0.039718861 seconds time elapsed
+
+       0.026468000 seconds user
+       0.009685000 seconds sys
+
+

@@ -1,0 +1,71 @@
+=== GDB BUG 1 ===
+⚠️ warning: Build ID mismatch between current exec-file /home/khanh/embedded_lab3/apps/buggy_app
+and automatically determined exec-file /usr/bin/buggy_app
+exec-file-mismatch handling is currently "ask"
+⚠️ warning: loading /usr/bin/buggy_app /usr/bin/buggy_app: No such file or directory.
+Reading /lib/ld-linux-armhf.so.3 from remote target...
+⚠️ warning: File transfers from remote targets can be slow. Use "set sysroot" to access files locally instead.
+Reading /lib/ld-linux-armhf.so.3 from remote target...
+0x76fdee58 in _start () from target:/lib/ld-linux-armhf.so.3
+Breakpoint 1 at 0x400732: file buggy_app.c, line 29.
+Breakpoint 2 at 0x400682: file buggy_app.c, line 7.
+Breakpoint 3 at 0x4006cc: file buggy_app.c, line 16.
+Breakpoint 4 at 0x400702: file buggy_app.c, line 24.
+Breakpoint 5 at 0x40068c: file buggy_app.c, line 9.
+Reading /lib/libc.so.6 from remote target...
+
+Breakpoint 1, main (argc=1, argv=0x7efffe94) at buggy_app.c:29
+29	int main(int argc, char *argv[]) {
+
+=== MAIN FUNCTION ===
+#0  main (argc=1, argv=0x7efffe94) at buggy_app.c:29
+
+Breakpoint 2, process_data (data=0x7efffcf0, len=5) at buggy_app.c:7
+7	    int sum = 0;
+
+=== PROCESS_DATA ===
+#0  process_data (data=0x7efffcf0, len=5) at buggy_app.c:7
+#1  0x00400774 in main (argc=1, argv=0x7efffe94) at buggy_app.c:35
+$1 = 5
+$2 = {10, 20, 30, 40, 50}
+
+Breakpoint 5, process_data (data=0x7efffcf0, len=5) at buggy_app.c:9
+9	        sum += data[i];                 /* Out-of-bounds khi i==len */
+
+=== BUG 1: OUT OF BOUNDS ===
+$3 = 5
+$4 = 5
+$5 = 1
+$6 = (int *) 0x7efffd04
+#0  process_data (data=0x7efffcf0, len=5) at buggy_app.c:9
+#1  0x00400774 in main (argc=1, argv=0x7efffe94) at buggy_app.c:35
+pc             0x40068c            0x40068c <process_data+20>
+sp             0x7efffcc8          0x7efffcc8
+lr             0x400775            4196213
+
+=== GDB BUG 2 AND BUG 3 ===
+Continuing.
+
+Breakpoint 3, create_message (text=0x400940 "Hello Embedded Linux") at buggy_app.c:16
+16	    char *buf = malloc(strlen(text) + 1);
+#0  create_message (text=0x400940 "Hello Embedded Linux") at buggy_app.c:16
+#1  0x00400788 in main (argc=1, argv=0x7efffe94) at buggy_app.c:39
+17	    strcpy(buf, text);
+18	    free(buf);
+19	    return buf;   /* Bug: tra ve pointer da bi free */
+$7 = 0x422010 "\"\004"
+0x422010:	"\"\004"
+Continuing.
+
+Breakpoint 4, calculate (a=100000, b=100000) at buggy_app.c:24
+24	    int result = a * b;   /* Bug: a*b co the overflow int */
+$8 = 100000
+$9 = 100000
+25	    printf("calculate(%d, %d) = %d\n", a, b, result);
+$10 = 1410065408
+$11 = 10000000000
+#0  calculate (a=100000, b=100000) at buggy_app.c:25
+#1  0x004007b4 in main (argc=1, argv=0x7efffe94) at buggy_app.c:44
+pc             0x40070c            0x40070c <calculate+20>
+sp             0x7efffcc8          0x7efffcc8
+lr             0x4007b5            4196277
