@@ -1,188 +1,175 @@
-# LOS201 - Embedded Linux Labs
+# LOS201 - Embedded Linux Systems
 
-## LAB 01 - Kernel and Boot Process
+Repository for Embedded Linux Systems laboratory and individual assignment work.
 
-Target: ARM Cortex-A9 / QEMU vexpress-a9
+## Environment
 
-### Part A - Linux Kernel
-Status: Completed
+- Host: Ubuntu Linux
+- Target: ARMv7 Cortex-A9
+- Emulator: QEMU Versatile Express (vexpress-a9)
+- Kernel: Linux 5.15
+- Toolchain: arm-linux-gnueabihf
 
-- Linux Kernel: 5.15
-- Architecture: ARMv7-A
-- Cross-Compiler: arm-linux-gnueabihf
-- Kernel image: zImage
-- Device Tree: vexpress-v2p-ca9.dtb
-- Successful build flags: KCFLAGS="-march=armv7-a"
+## Contents
 
-### Part B - U-Boot
-Status: Completed - U-Boot built, environment saved, expected Kernel Panic recorded
-
-### Part C - BusyBox and initramfs
-Status: Completed - BusyBox initramfs booted successfully on QEMU
-
-## LAB 02 - Device Driver and File System
-
-Target: ARM Cortex-A9 / QEMU vexpress-a9
-
-### Part A - Character Device Driver
-Status: Completed - ARM kernel module built and read/write tested.
-
-### Part B - procfs and sysfs
-Status: Completed - /proc/lab2_info and sysfs attributes tested.
-
-### Part C - MTD and JFFS2
-Status: Completed - NAND simulator, JFFS2 and persistence tested on Ubuntu Host.
-
-### Part D - BusyBox Auto-load
-Status: Completed - module auto-loaded successfully during QEMU boot.
-
-## ASSIGNMENT 01 - Linux Kernel Drivers
-
-Target: ARM Cortex-A9 / QEMU vexpress-a9  
-Kernel: Linux 5.15  
-Architecture: ARMv7-A  
-Cross-compiler: `arm-linux-gnueabihf-`
-
-This section documents the two driver implementation tasks and their QEMU test evidence.
-
-### Task 1 - IOCTL Character Device Driver
-
-Status: Implemented; the committed QEMU test log reports **TASK1 TEST PASSED**.
-
-Files:
-- Driver: [asgn1_driver.c](asgn01/task1_ioctl/asgn1_driver.c)
-- IOCTL definitions: [asgn1_ioctl.h](asgn01/task1_ioctl/asgn1_ioctl.h)
-- User-space test utility source: [asgn1_ctl.c](asgn01/task1_ioctl/asgn1_ctl.c)
-- User-space utility binary: [asgn1_ctl](asgn01/task1_ioctl/asgn1_ctl)
-- Kernel module Makefile: [Makefile](asgn01/task1_ioctl/Makefile)
-- QEMU test script: [test_asgn1.sh](asgn01/task1_ioctl/test_asgn1.sh)
-
-Implemented and tested features:
-- Character device at `/dev/asgn1`.
-- IOCTL commands: `RESET_BUFFER`, `GET_STATS`, `SET_MODE`, and `GET_VERSION`.
-- Kernel mode and echo mode.
-- Buffer/statistics reset and statistics retrieval.
-- Invalid IOCTL handling with `ENOTTY`.
-- Driver information through procfs and mode/buffer information through sysfs.
-
-Evidence:
-- [Task 1 test output](asgn01/logs/test_asgn1_output.txt)
-- [Full QEMU session](asgn01/logs/qemu_session.txt)
-- [Kernel dmesg log](asgn01/logs/dmesg_full.txt)
-
-### Task 2 - Misc Counter Driver
-
-Status: Implemented; the committed QEMU test log reports **TASK2 TEST PASSED**.
-
-Files:
-- Driver: [counter_driver.c](asgn01/task2_misc/counter_driver.c)
-- Kernel module Makefile: [Makefile](asgn01/task2_misc/Makefile)
-- QEMU test script: [test_counter.sh](asgn01/task2_misc/test_counter.sh)
-
-Implemented and tested features:
-- Misc device registered with dynamic minor number and major number 10.
-- Device node: `/dev/counter`.
-- Reading returns the current counter value and increments it.
-- Writing sets the counter to a non-negative integer.
-- Negative values and invalid non-numeric input are rejected.
-- Counter value and read/write totals are exposed through `/proc/counter_info`.
-
-Evidence:
-- [Task 2 test output](asgn01/logs/test_counter_output.txt)
-- [Full QEMU session](asgn01/logs/qemu_session.txt)
-- [Kernel dmesg log](asgn01/logs/dmesg_full.txt)
-
-### Build the kernel modules
-
-The Makefiles expect the Linux 5.15 kernel tree at `$HOME/embedded_lab1/kernel/linux-5.15` and the ARM cross-compiler to be installed.
-
-```bash
-# Build Task 1 IOCTL driver
-cd ~/LOS201_Lab/asgn01/task1_ioctl
-make
-
-# Build Task 2 misc counter driver
-cd ~/LOS201_Lab/asgn01/task2_misc
-make
-```
-
-Run the test scripts in the configured QEMU/initramfs test environment; they expect the modules and test utility at the paths specified inside each script.
-
-### Test summary
-
-| Task | Recorded result | Evidence |
-|---|---|---|
-| Task 1 - IOCTL driver | PASS | [test_asgn1_output.txt](asgn01/logs/test_asgn1_output.txt) |
-| Task 2 - Misc counter | PASS | [test_counter_output.txt](asgn01/logs/test_counter_output.txt) |
-| Combined QEMU run | Both tasks exited with status 0 | [qemu_session.txt](asgn01/logs/qemu_session.txt) |
-
-> **Note:** The current Task 1 version string contains the placeholder `MSSV`, and both driver sources contain placeholder author metadata (`HoTen - MSSV`). Replace these values with your own details if your course requires them.
-
-
-## LAB 03 - Debugging and Performance Analysis
-
-**Status:** Completed
-
-### Objectives
-- Remote debugging using GDB and gdbserver.
-- Memory leak detection using Valgrind.
-- System call analysis using strace.
-- CPU profiling using perf and FlameGraph.
-- Real-time latency measurement using cyclictest.
-
-### Results
-- Identified 3 bugs using GDB.
-- Fixed 16,900 bytes of memory leaks.
-- Successfully analyzed system calls on ARMv7 QEMU.
-- Identified heavy_compute() as a CPU hotspot.
-- Generated latency histograms.
-
-### Files
-- [Source Code](./lab03/apps/)
-- [Logs](./lab03/logs/)
-- [ARM initramfs](./lab03/output/)
-- [Full LAB03](./lab03/)
+- [LAB-01 - Kernel Configuration & Embedded Linux Boot](#lab-01)
+- [LAB-02 - Device Driver & File System Management](#lab-02)
+- [LAB-03 - Debugging & Performance Analysis](#lab-03)
+- [ASSIGNMENT-01 - How to Write a Device Driver](#assignment-01)
+- [ASSIGNMENT-02 - Sensor Monitoring System](#assignment-02)
 
 ---
 
+<a id="lab-01"></a>
+## LAB-01 - Kernel Configuration & Embedded Linux Boot
+
+**Scope of the exercise:**
+
+- Cau hinh va cross-compile Linux kernel cho ARM.
+- Tim hieu U-Boot, Device Tree Blob va qua trinh boot.
+- Xay dung BusyBox root filesystem, initramfs va boot tren QEMU.
+
+**Repository files:**
+
+- `lab01/logs/kernel-panic.txt`
+- `lab01/logs/linux-boot-success.txt`
+- `lab01/logs/u-boot-environment.txt`
+- `lab01/logs/u-boot-startup.txt`
+- `lab01/scripts/boot-linux-qemu.sh`
+
+Browse: [lab01/](lab01/)
+
 ---
 
-## ASSIGNMENT-02 – Smart Monitoring System
+<a id="lab-02"></a>
+## LAB-02 - Device Driver & File System Management
 
-### Part A – Simulated Sensor Driver
+**Scope of the exercise:**
 
-**Environment**
-- Linux Kernel 5.15
-- ARMv7 Cortex-A9
-- QEMU Versatile Express
+- Xay dung va quan ly Linux kernel module.
+- Tim hieu character device, read/write, procfs va sysfs.
+- Thuc hanh MTD/JFFS2 va BusyBox init.
 
-**Source files**
-- `asgn02/driver/sms_sensor_driver.c` – Kernel driver
-- `asgn02/driver/sms_sensor.h` – Device and ioctl definitions
-- `asgn02/driver/Makefile` – ARM module build
-- `asgn02/tests/test_ioctl.c` – IOCTL verification
+**Repository files:**
 
-**Implemented features**
-- Character device `/dev/sms_sensor`
-- CSV sensor readings
-- Simulated temperature and humidity
-- `/proc/sms_stats` statistics
-- `SMS_SET_INTERVAL` ioctl
-- Mutex protection and sampling interval control
+- `lab02/driver/Makefile`
+- `lab02/driver/lab2_driver.c`
+- `lab02/init-scripts/test_driver.sh`
+- `lab02/init-scripts/test_procfs.sh`
+- `lab02/logs/boot_log.txt`
+- `lab02/logs/driver_test.txt`
+- `lab02/logs/mtd_jffs2.txt`
+- `lab02/logs/procfs_test.txt`
+- `lab02/scripts/run_mtd_test.sh`
 
-**Testing results**
-- Kernel module loading: PASS
+Browse: [lab02/](lab02/)
+
+---
+
+<a id="lab-03"></a>
+## LAB-03 - Debugging & Performance Analysis
+
+**Scope of the exercise:**
+
+- Debug chuong trinh bang GDB.
+- Phan tich loi bo nho bang Valgrind.
+- Theo doi system calls bang strace.
+- Phan tich CPU performance bang perf.
+- Danh gia scheduling latency bang cyclictest.
+
+**Repository files:**
+
+- `lab03/apps/buggy_app.c`
+- `lab03/apps/leaky_app.c`
+- `lab03/apps/leaky_app_arm_measure.c`
+- `lab03/apps/leaky_app_fixed.c`
+- `lab03/apps/perf_target.c`
+- `lab03/logs/final_check_summary.txt`
+- `lab03/logs/gdb_bug1.txt`
+- `lab03/logs/gdb_bug2_3.txt`
+- `lab03/logs/gdb_session.txt`
+- `lab03/logs/hist_standard.txt`
+- `lab03/logs/hist_standard_raw.txt`
+- `lab03/logs/hist_under_load.txt`
+- ... and 21 more files
+
+Browse: [lab03/](lab03/)
+
+---
+
+<a id="assignment-01"></a>
+## ASSIGNMENT-01 - How to Write a Device Driver
+
+**Scope of the exercise:**
+
+- Mo rong Linux device driver voi ioctl interface.
+- Tim hieu va trien khai misc device driver.
+- Phan tich thiet ke va so sanh cac cach dang ky driver.
+
+**Repository files:**
+
+- `asgn01/logs/dmesg_full.txt`
+- `asgn01/logs/qemu_session.txt`
+- `asgn01/logs/test_asgn1_output.txt`
+- `asgn01/logs/test_counter_output.txt`
+- `asgn01/task1_ioctl/Makefile`
+- `asgn01/task1_ioctl/asgn1_ctl.c`
+- `asgn01/task1_ioctl/asgn1_driver.c`
+- `asgn01/task1_ioctl/asgn1_ioctl.h`
+- `asgn01/task1_ioctl/test_asgn1.sh`
+- `asgn01/task2_misc/Makefile`
+- `asgn01/task2_misc/counter_driver.c`
+- `asgn01/task2_misc/test_counter.sh`
+
+Browse: [asgn01/](asgn01/)
+
+---
+
+<a id="assignment-02"></a>
+## ASSIGNMENT-02 - Sensor Monitoring System
+
+**Scope of the exercise:**
+
+- Part A: Mo phong temperature/humidity kernel driver.
+- Cung cap /dev/sms_sensor va /proc/sms_stats.
+- Dieu khien sampling interval bang SMS_SET_INTERVAL.
+- Part B: Sensor, Processor, Alert va Logger threads.
+- Tich hop IPC, logging, debugging va real-time evaluation.
+
+**Repository files:**
+
+- `asgn02/driver/Makefile`
+- `asgn02/driver/sms_sensor.h`
+- `asgn02/driver/sms_sensor_driver.c`
+- `asgn02/tests/test_ioctl.c`
+
+Browse: [asgn02/](asgn02/)
+
+### Verified progress
+
+**Part A - Kernel Driver:**
+
+- ARMv7 module build: PASS
+- QEMU module loading: PASS
 - CSV sensor readings: PASS
-- Procfs statistics: PASS
-- IOCTL interval configuration: PASS
+- procfs statistics: PASS
+- SMS_SET_INTERVAL ioctl: PASS
 - Invalid interval rejection: PASS
-- EAGAIN before minimum interval: PASS
-- Reading after interval: PASS
+- Sampling interval enforcement: PASS
 
-**Build**
+**Part B - Multithreaded Application:**
 
-From the repository root, run `cd asgn02/driver` followed by `make arm`. Adjust the kernel source path in the Makefile for your environment.
+- Development pending.
 
-**Progress**
-- Part A: Core driver functionality tested on QEMU
-- Part B: Multithreaded userspace application – pending
+**Driver build:**
+
+Run `make arm` from `asgn02/driver/`.
+The Makefile kernel source path may need adjustment.
+
+---
+
+## Notes
+
+The sections describe the scope of each exercise.
+Only explicitly verified results are marked PASS.
+Source directories contain the implementation files.
