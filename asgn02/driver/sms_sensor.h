@@ -18,3 +18,4 @@
     _IOW(SMS_IOC_MAGIC, 1, unsigned int)
 
 #endif /* SMS_SENSOR_H */
+
