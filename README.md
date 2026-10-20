@@ -173,3 +173,68 @@ The Makefile kernel source path may need adjustment.
 The sections describe the scope of each exercise.
 Only explicitly verified results are marked PASS.
 Source directories contain the implementation files.
+
+---
+
+## Assignment 02 - Sensor Monitoring System
+
+**Embedded Linux Systems - Capstone Assignment**
+
+**Environment:** Ubuntu Linux, ARMv7 Cortex-A9, QEMU vexpress-a9, Linux Kernel 5.15.
+
+**[View Assignment 02 Source Code](asgn02/)**
+
+### Task 1 - Multi-threaded Application
+
+- Custom Kernel Driver: `/dev/sms_sensor`
+- Driver statistics: `/proc/sms_stats`
+- ioctl: configurable sensor sampling interval
+- Sensor Thread: periodic data acquisition
+- Processor Thread: rolling averages and alert detection
+- Alert Thread: POSIX message queue
+- Logger Thread: timestamped file logging
+- Circular Buffer: pthread mutex and condition variable
+
+### Task 2 - Memory Management and Driver Integration
+
+- ARM/QEMU integration test completed
+- 117 samples collected in 60 seconds at 500 ms interval
+- Valgrind: 0 memory errors and no heap leaks detected
+- Driver read counter verified
+
+### Task 3 - Debugging and Profiling
+
+- GDB: multi-thread debugging and backtrace
+- Valgrind: memory leak analysis
+- strace: system call profiling
+- perf: CPU hotspot analysis
+
+### Task 4 - Real-Time Scheduling
+
+Comparison of SCHED_OTHER and SCHED_FIFO with 1,092 jitter samples per mode.
+
+| Metric | SCHED_OTHER | SCHED_FIFO |
+|---|---:|---:|
+| Priority | 0 | 50 |
+| Samples | 1092 | 1092 |
+| Min jitter (us) | 359 | 251 |
+| Average jitter (us) | 5627.29 | 5497.91 |
+| Max jitter (us) | 11315 | 10873 |
+| P99 jitter (us) | 10680 | 10495 |
+| Missed deadlines | 109 | 108 |
+
+### Task 5 - Technical Report and Demonstration
+
+- System architecture and thread synchronization analysis
+- Technical report: pending completion
+- Demo video (3-5 minutes): pending completion
+- Final source package: pending completion
+
+### Source Code and Test Evidence
+
+- [Application Source](asgn02/app/src/)
+- [Application Headers](asgn02/app/include/)
+- [Kernel Driver](asgn02/driver/)
+- [Unit Tests](asgn02/app/tests/)
+- [Debugging and Benchmark Logs](asgn02/logs/)
+
