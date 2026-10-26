@@ -19,6 +19,8 @@
 #include <linux/math64.h>
 #include <linux/mutex.h>
 #include <linux/errno.h>
+#include <linux/atomic.h>
+#include <linux/device.h>
 
 #include "sms_sensor.h"
 
@@ -29,7 +31,9 @@ static DEFINE_MUTEX(sms_lock);
 static unsigned int interval_ms =
     SMS_DEFAULT_INTERVAL_MS;
 
+
 static unsigned int read_count;
+static unsigned int read_cnt;
 static unsigned int last_temp_centi;
 static unsigned int last_hum_centi;
 
@@ -50,6 +54,15 @@ unsigned int temperature;
 unsigned int humidity;
 u64 now_ms;
 int len;
+
+/* Lock shared driver state */
+    mutex_lock(&sms_lock);
+
+/* Increase read attempt counter */
+    read_cnt++;
+
+/* Unlock shared driver state */
+    mutex_unlock(&sms_lock);
 
 /* Không đọc lại khi đã hết một mẫu */
 if (*ppos > 0)
@@ -198,7 +211,36 @@ static const struct proc_ops sms_proc_ops = {
     .proc_lseek   = seq_lseek,
     .proc_release = single_release,
 };
+/* ==================================================
+ * TASK 01: READ_CNT SYSFS ATTRIBUTE
+ *
+ * Purpose:
+ * Display read_cnt through sysfs.
+ * ==================================================
+ */
 
+static ssize_t read_cnt_show(
+    struct device *dev,
+    struct device_attribute *attr,
+    char *buf)
+{
+    unsigned int value;
+
+    /* Lock before accessing shared counter */
+    mutex_lock(&sms_lock);
+
+    /* Get the current read_cnt value */
+    value = read_cnt;
+
+    /* Unlock after reading counter */
+    mutex_unlock(&sms_lock);
+
+    /* Return the counter value to userspace */
+    return sysfs_emit(buf, "%u\n", value);
+}
+
+/* Create a read-only sysfs attribute */
+static DEVICE_ATTR_RO(read_cnt);
 /* ===== G. MODULE INITIALIZATION ===== */
 
 static int __init sms_init(void)
@@ -226,7 +268,29 @@ static int __init sms_init(void)
         misc_deregister(&sms_device);
         return -ENOMEM;
     }
+/* ==================================================
+ * TASK 01: REGISTER READ_CNT SYSFS ATTRIBUTE
+ * ==================================================
+ */
 
+ret = device_create_file(
+    sms_device.this_device,
+    &dev_attr_read_cnt
+);
+
+if (ret) {
+
+    /* Report sysfs creation failure */
+    pr_err("sms_sensor: failed to create read_cnt sysfs\n");
+
+    /* Remove original procfs entry */
+    proc_remove(sms_proc_entry);
+
+    /* Unregister misc device */
+    misc_deregister(&sms_device);
+
+    return ret;
+}
     pr_info("sms_sensor: driver initialized\n");
 
     return 0;
@@ -236,9 +300,19 @@ static int __init sms_init(void)
 
 static void __exit sms_exit(void)
 {
+    /* TASK 01: Remove read_cnt sysfs attribute */
+    device_remove_file(
+        sms_device.this_device,
+        &dev_attr_read_cnt
+    );
+
+    /* Remove original procfs entry */
     proc_remove(sms_proc_entry);
+
+    /* Unregister misc device */
     misc_deregister(&sms_device);
 
+    /* Kernel log */
     pr_info("sms_sensor: driver unloaded\n");
 }
 
