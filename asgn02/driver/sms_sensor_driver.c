@@ -35,6 +35,7 @@ static unsigned int interval_ms =
 static unsigned int read_count;
 static unsigned int read_cnt;
 static unsigned int read_err_cnt;
+static unsigned int write_cnt;
 static unsigned int last_temp_centi;
 static unsigned int last_hum_centi;
 
@@ -174,11 +175,53 @@ return 0;
 }
 
 /* ===== D. FILE OPERATIONS ===== */
+/* ==================================================
+ * TASK 03: WRITE CALLBACK
+ *
+ * Purpose:
+ * Count calls to sms_write().
+ *
+ * The original sensor is read-only in function.
+ * Non-empty writes are counted but rejected.
+ * ==================================================
+ */
+
+static ssize_t sms_write(
+    struct file *file,
+    const char __user *buf,
+    size_t count,
+    loff_t *ppos)
+{
+    /* Lock shared driver state */
+    mutex_lock(&sms_lock);
+
+    /* Count this write callback invocation */
+    write_cnt++;
+
+    /* Release mutex */
+    mutex_unlock(&sms_lock);
+
+    /* No data to write */
+    if (count == 0)
+        return 0;
+
+    /* Writing sensor data is not supported yet */
+    return -EOPNOTSUPP;
+}
+
 
 static const struct file_operations sms_fops = {
     .owner          = THIS_MODULE,
+
+    /* Original sensor read callback */
     .read           = sms_read,
+
+    /* TASK 03: Write callback */
+    .write          = sms_write,
+
+    /* Original ioctl callback */
     .unlocked_ioctl = sms_ioctl,
+
     .llseek         = no_llseek,
 };
 
@@ -204,7 +247,9 @@ static int sms_proc_show(
     seq_printf(m, "read_count: %u\n", read_count);
 /* TASK 02: Display number of failed read callbacks */
     seq_printf(m, "read_err_cnt: %u\n", read_err_cnt);
-
+/* TASK 03: Display write callback counter */
+    seq_printf(m, "write_cnt: %u\n", write_cnt);
+    
     seq_printf(m, "last_temperature: %u.%02u\n",
                last_temp_centi / 100,
                last_temp_centi % 100);
