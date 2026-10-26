@@ -34,6 +34,7 @@ static unsigned int interval_ms =
 
 static unsigned int read_count;
 static unsigned int read_cnt;
+static unsigned int read_err_cnt;
 static unsigned int last_temp_centi;
 static unsigned int last_hum_centi;
 
@@ -76,9 +77,17 @@ mutex_lock(&sms_lock);
 /* Lấy thời gian monotonic */
 now_ms = ktime_to_ms(ktime_get());
 /* Chua du khoang thoi gian de doc mau moi */
+/* Check whether minimum sampling interval has elapsed */
 if (last_read_ms != 0 &&
     now_ms - last_read_ms < interval_ms) {
+
+    /* TASK 02: Count failed read due to sampling interval */
+    read_err_cnt++;
+
+    /* Release original driver mutex */
     mutex_unlock(&sms_lock);
+
+    /* Ask userspace to retry later */
     return -EAGAIN;
 }
 /* Tạo dữ liệu cảm biến */
@@ -92,17 +101,31 @@ len = scnprintf(line, sizeof(line),
     temperature / 100, temperature % 100,
     humidity / 100, humidity % 100);
 /* Kiem tra buffer cua userspace */
+/* Validate userspace buffer size */
 if (count < (size_t)len) {
+
+    /* TASK 02: Count invalid read buffer */
+    read_err_cnt++;
+
+    /* Release original driver mutex */
     mutex_unlock(&sms_lock);
+
+    /* Return invalid argument error */
     return -EINVAL;
 }
-
 /* Tra CSV ve userspace */
+/* Copy sensor data from kernel to userspace */
 if (copy_to_user(buf, line, len)) {
+
+    /* TASK 02: Count failed userspace copy */
+    read_err_cnt++;
+
+    /* Release original driver mutex */
     mutex_unlock(&sms_lock);
+
+    /* Return bad address error */
     return -EFAULT;
 }
-
 /* Cap nhat thong ke sau khi copy thanh cong */
 read_count++;
 last_temp_centi = temperature;
@@ -179,6 +202,8 @@ static int sms_proc_show(
     mutex_lock(&sms_lock);
 
     seq_printf(m, "read_count: %u\n", read_count);
+/* TASK 02: Display number of failed read callbacks */
+    seq_printf(m, "read_err_cnt: %u\n", read_err_cnt);
 
     seq_printf(m, "last_temperature: %u.%02u\n",
                last_temp_centi / 100,
